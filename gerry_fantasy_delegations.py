@@ -1,6 +1,16 @@
 import random
 import numpy as np
 
+''' To run this: 
+Dvotes = [1, 0, 0, 1, 0]
+stateDvotes = [1, 0, 0, 1]
+number_of_simulated_delegations = [2,2]
+symmet = 0
+filename = "filename"
+
+gerry_fantasy_delegations(stateDvotes, Dvotes, symmet, number_of_simulated_delegations, filename)
+'''
+
 '''
  paste into code that calls this code:
  [meanseats,SDseats,sigma,actual_Dseats,total_state_seats,num_matching,alpha]=gerry_fantasy_delegations(stateresults,nationalresults,1000000,outputfilename);
@@ -33,46 +43,46 @@ import numpy as np
  alldistricts is the set of districts from which to build simulated delegations
  '''
 
-Dvotes = [1, 0, 0, 1, 0]
-stateDvotes = [1, 0, 0, 1]
-number_of_simulated_delegations = [2,2]
-symmet = 0
+def gerry_fantasy_delegations(stateDvotes,Dvotes,symmet,number_of_simulated_delegations,outputfilename):
+    # alldistricts is the set of districts from which to build simulated
+    # delegations
+    alldist = len(Dvotes)
+    alldistricts = list(range(alldist))  # Gives you [0,1,2,..,alldist]
+    total_state_seats = len(stateDvotes)
+    # I'm not sure what you want here
+    sdist = total_state_seats
+    # Dvotes=normrnd(0.5,0.15,size(alldistricts)); % create a symmetric
+    # distribution to sample from # This is commented out in Sam's work. Do you
+    # want it?
 
+    # true delegation
+    # statewide average D vote share
+    s_dvote = sum([stateDvotes[sdist-1]]) / total_state_seats # The minus 1 is to go from matlab to python indexing
+    actual_Dseats = sum([stateDvotes[sdist-1] > 0.5])  # number of actual D seats won
 
-# alldistricts is the set of districts from which to build simulated
-# delegations
-alldist = len(Dvotes)
-alldistricts = [alldist, alldist, ]  # This became a list so it can be scripted later. Will need to fix
-total_state_seats = len(stateDvotes)
-# I'm not sure what you want here
-sdist = total_state_seats
-# Dvotes=normrnd(0.5,0.15,size(alldistricts)); % create a symmetric
-# distribution to sample from # This is comment out in Sam's work. Do you
-# want it?
-
-# true delegation
-# statewide average D vote share
-s_dvote = sum([stateDvotes[sdist-1]]) / total_state_seats # The minus 1 is to go from matlab to python indexing
-actual_Dseats = sum([stateDvotes[sdist-1] > 0.5])  # number of actual D seats won
-
-# simulate some delegations
-# clear p dseats # Unclear on this
-p = np.zeros(number_of_simulated_delegations)
-dseats = np.zeros(number_of_simulated_delegations)
-if symmet == 0:
-    for i in range(len(number_of_simulated_delegations)):
-        # pick a random set of districts
-        fantasydel = alldistricts[0]#[int(np.floor(random.randint(1,total_state_seats) * alldist) + 1)]
-        #p[i] = sum(Dvotes[fantasydel-1]) / total_state_seats
-        # average two - party vote share in the simulated delegation
-        #dseats[i] = sum(Dvotes[fantasydel] > 0.5)
-        # the simulated delegation has this many D seats
-else:
-    for i in range(len(number_of_simulated_delegations)):
-        fantasydel = alldistricts[0]#[np.floor(random.randint(1,total_state_seats) * alldist) + 1]
-        # pick a random set of districts
-        flips = np.sign(random.randint(1,total_state_seats)) - 0.5
-        #p[i] = (sum(np.multiply(Dvotes[fantasydel-1],flips)) + len(flips[flips == -1])) / total_state_seats
-        # average two - party vote share in the simulated delegation
-        #dseats[i] = sum(Dvotes(fantasydel(flips[flips == 1])) > 0.5) + sum(Dvotes(fantasydel(flips[flips == -1])) < 0.5)
-        # the simulated delegation has this many D seats
+    # simulate some delegations
+    # clear p dseats # Unclear on this
+    p = np.zeros(number_of_simulated_delegations)
+    dseats = np.zeros(number_of_simulated_delegations)
+    if symmet == 0:
+        for i in range(len(number_of_simulated_delegations)):
+            # pick a random set of districts
+            print("total_state_seats is {}".format(total_state_seats))
+            valu = np.floor([alldist * random.random() for i in range(total_state_seats)]) + 1
+            print(random.randint(1,total_state_seats) * alldist)
+            fantasydel = []
+            for x in range(len(valu)):
+                fantasydel.append(alldistricts[int(valu[x])-1])
+            p[i] = sum(Dvotes[fantasydel-1]) / total_state_seats
+            # average two - party vote share in the simulated delegation
+            #dseats[i] = sum(Dvotes[fantasydel] > 0.5)
+            # the simulated delegation has this many D seats
+    else:
+        for i in range(len(number_of_simulated_delegations)):
+            fantasydel = alldistricts[0]#[np.floor(random.randint(1,total_state_seats) * alldist) + 1]
+            # pick a random set of districts
+            flips = np.sign(random.randint(1,total_state_seats)) - 0.5
+            #p[i] = (sum(np.multiply(Dvotes[fantasydel-1],flips)) + len(flips[flips == -1])) / total_state_seats
+            # average two - party vote share in the simulated delegation
+            #dseats[i] = sum(Dvotes(fantasydel(flips[flips == 1])) > 0.5) + sum(Dvotes(fantasydel(flips[flips == -1])) < 0.5)
+            # the simulated delegation has this many D seats
