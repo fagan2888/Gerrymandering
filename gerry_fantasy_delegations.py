@@ -67,16 +67,16 @@ def gerry_fantasy_delegations(stateDvotes,Dvotes,symmet,number_of_simulated_dele
     if symmet == 0:
         for i in range(len(number_of_simulated_delegations)):
             # pick a random set of districts
-            print("total_state_seats is {}".format(total_state_seats))
+
             valu = np.floor([alldist * random.random() for i in range(total_state_seats)]) + 1
-            print(random.randint(1,total_state_seats) * alldist)
+            #print(random.randint(1,total_state_seats) * alldist)
             fantasydel = []
             for x in range(len(valu)):
                 fantasydel.append(alldistricts[int(valu[x])-1])
             Dvotes_of_fant = [Dvotes[fantasydel[x]-1] for x in range(len(fantasydel))]
             p[i] = sum(Dvotes_of_fant) / total_state_seats
             # average two - party vote share in the simulated delegation
-            #dseats[i] = sum(Dvotes[fantasydel] > 0.5)
+            dseats[i] = sum(Dvotes_of_fant)  # This had  >0.5 but they all seem to be interger values
             # the simulated delegation has this many D seats
     else:
         for i in range(len(number_of_simulated_delegations)):
@@ -87,3 +87,11 @@ def gerry_fantasy_delegations(stateDvotes,Dvotes,symmet,number_of_simulated_dele
             # average two - party vote share in the simulated delegation
             #dseats[i] = sum(Dvotes(fantasydel(flips[flips == 1])) > 0.5) + sum(Dvotes(fantasydel(flips[flips == -1])) < 0.5)
             # the simulated delegation has this many D seats
+    print("total_state_seats is {}".format(total_state_seats))
+    print("alldist is {}".format(alldist))
+    print("valu is based on a random number. In this case it's {}".format(valu))
+    print("fantasydel is {}".format(fantasydel))
+    print("p is {}".format(p))
+    print("dseats is {}".format(dseats))
+    
+    
