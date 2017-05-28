@@ -73,7 +73,8 @@ def gerry_fantasy_delegations(stateDvotes,Dvotes,symmet,number_of_simulated_dele
             fantasydel = []
             for x in range(len(valu)):
                 fantasydel.append(alldistricts[int(valu[x])-1])
-            p[i] = sum(Dvotes[fantasydel-1]) / total_state_seats
+            Dvotes_of_fant = [Dvotes[fantasydel[x]-1] for x in range(len(fantasydel))]
+            p[i] = sum(Dvotes_of_fant) / total_state_seats
             # average two - party vote share in the simulated delegation
             #dseats[i] = sum(Dvotes[fantasydel] > 0.5)
             # the simulated delegation has this many D seats
