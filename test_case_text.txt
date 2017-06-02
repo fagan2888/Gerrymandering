@@ -1,0 +1,23 @@
+This test case is for Pennsylvania 2012.
+Inputs:
+gerrymander_tests_part_1(2012, 38, 2012, range(1,51),.25,0,"PA","PA_2012")
+results:
+Democratic mean vote share: .50464
+Standard deviation of democratic vote share: .12089
+Republican mean vote share: .49536
+Standard Deviation of Republican Mean Vote share: .038507
+t test statistic: 4.6402
+t test p value: .00013615
+state results mean: .50464
+state results median: .42815
+mean median difference: .076488
+p value of mean median difference: .0079833
+national standard deviation: .076121
+chi-squared statistic: 3.0707
+chi-squared probability: .009952
+gerrymander_tests_part_2(gerrymander_read_results(2016,38),gerrymander_read_results(2016,range(1,51)),0,1000000,"PA_2012")
+results:
+Average number of seats across matching fantasy delegations: 8.0252
+Standard Deviation of seats across matching fantasy delegations: 1.0636
+number of matching fantasy delegations: 18286
+Monte Carlo Probability: .004156
