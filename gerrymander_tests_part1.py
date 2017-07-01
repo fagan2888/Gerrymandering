@@ -1,6 +1,7 @@
 ######second case is when you have an actual year and state of interest. That's what I'll be focusing on getting working first
 # (the case when year != 0).
 #
+# To test run this function, use: gerrymander_tests_part1(2012,38,2012,0,0.75,0,'Pennsylvania','foo')
 # p1 of the Matlab code is the probability, and it's the main thing that's being calculated
 
 from datetime import datetime
@@ -14,8 +15,8 @@ import matplotlib.pyplot as plt
 
 ######################################################################################################################
 
-def gerrymander_readresults(year, states):
-    # Let's read the csv file into a pandas dataframe
+def gerrymander_read_results(year, states):
+    # Let's read the csv file into a pandas data frame
     df = pd.read_csv('House_1898_2014_voteshares_notext.csv', header=None)
     # Let's name the columns
     df.columns = ['Year', 'State', 'District', 'D_voteshare', 'Incumbent', 'Winner']
@@ -23,14 +24,14 @@ def gerrymander_readresults(year, states):
     year_df = df[df['Year'] == year]
     # Now we'll just take the values with the correct states
     result = year_df[year_df['State'].isin(states)]
-    # Drop the 'Year' column from the dataframe
+    # Drop the 'Year' column from the data frame
     del result['Year']
-    # Return the remaining dataframe
+    # Return the remaining data frame
     return result
 
 
-# This is a port of gerrymander_statename.m
-#def gerrymander_statename(state_number_list):
+# This is a port of gerrymander_state_name.m
+#def gerrymander_state_name(state_number_list):
 #    '''This function accepts a list of ints as an input and returns the state
 #    abbreviations corresponding to those numbers'''
 #    statelist = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA',
@@ -41,8 +42,8 @@ def gerrymander_readresults(year, states):
 #    for i in range(len(print_list)):
 #        print(statelist[print_list[i] - 1], end=' ')
 
-# This is a port of gerrymander_statename.m
-def gerrymander_statename(foo):
+# This is a port of gerrymander_state_name.m
+def gerrymander_state_name(foo):
     statelist = 'AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY '
 
     sfoo = ''
@@ -71,7 +72,8 @@ def int_to_list(possible_int):
         possible_int = [possible_int]
     return possible_int
 
-def vartest(data_c, var_c):
+
+def var_test(data_c, var_c):
     '''This function calculates variance test like the similar function in Matlab in source code with left tail'''
     df = len(data_c) - 1
     var_d = np.var(data_c, ddof=1)
@@ -81,11 +83,12 @@ def vartest(data_c, var_c):
 
 ######################################################################################################################
 
-def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputeduncontested, symm, state_label,
-                            outputfilename):
-    # Check to make sure states and statebaseline are lists of ints
-#    states = int_to_list(states)
-#    statebaseline = int_to_list(statebaseline)
+
+def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed_uncontested, symm, state_label,
+                            output_filename):
+    # Check to make sure states and state_baseline are lists of ints
+    states = int_to_list(states)
+    state_baseline = int_to_list(state_baseline)
 
     # electionmessage = 'U.S. House election of ' + str(year) + ' in ' + str(statename)
     electionmessage = 'Election to be analyzed: '
@@ -94,14 +97,14 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
     parameterlist0 = 'Parameters: year=%s ' % year
     if year == 0:
         parameterlist1 = 'states=%s ' % len(states)  # need to check!!!!
-        parameterlist1 = parameterlist1 + ' yearbaseline=%i statebaseline=' % yearbaseline
+        parameterlist1 = parameterlist1 + ' year_baseline=%i state_baseline=' % year_baseline
     else:
-        parameterlist1 = 'Parameters: year=%i states=%i yearbaseline=%i statebaseline=' % (
-        year, len(states), yearbaseline)
+        parameterlist1 = 'Parameters: year=%i states=%i year_baseline=%i state_baseline=' % (
+            year, len(states), year_baseline)
 
-    parameterlist2 = '%i ' % len(statebaseline)
-    parameterlist3 = 'imputeduncontested=%.2f symm=%i statelabel=%s outputfilename=%s' % (
-    imputeduncontested, symm, state_label, outputfilename)
+    parameterlist2 = '%i ' % len(state_baseline)
+    parameterlist3 = 'imputeduncontested=%.2f symm=%i statelabel=%s output_filename=%s' % (
+        imputed_uncontested, symm, state_label, output_filename)
     parameterlisting = parameterlist0 + parameterlist1 + parameterlist2 + parameterlist3
 
     # reset_selective parameterlist0 parameterlist1 parameterlist2 parameterlist3
@@ -110,22 +113,22 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
         #        stateraw=states(:,3); % use the variable "states" as the voting results data
         electionmessage = electionmessage + 'Custom data set, ' + state_label
     elif year in np.arange(1898, 2100, 2):
-        statedata = gerrymander_readresults(year, states)
+        statedata = gerrymander_read_results(year, states)
         stateraw = statedata['D_voteshare']  # I'm thinking he's looking for D_voteshare
-        statename = [gerrymander_statename(states)]
+        statename = [gerrymander_state_name(states)]
         electionmessage = electionmessage + ' U.S. House election of ' + str(year) + ' in ' + str(statename)
     else:
-        statedata = gerrymander_readresults(2012, 38)
+        statedata = gerrymander_read_results(2012, 38)
         stateraw = statedata['D_voteshare']  # I'm thinking he's looking for D_voteshare
-        statename = gerrymander_statename([38])
+        statename = gerrymander_state_name([38])
         print('Year parameter didn''t parse - defaulting to U.S. House Pennsylvania 2012')
 
     baselinemessage = 'Districts to be sampled for fantasy delegations: '
 
     ##############################################################################
-    nationaldata = gerrymander_readresults(yearbaseline, statebaseline)
+    nationaldata = gerrymander_read_results(year_baseline, state_baseline)
 
-    if yearbaseline == 0:
+    if year_baseline == 0:
         len(nationaldata)
         foo = np.random.normal(0.5, 0.15, 435)  # generate a generic random distribution
         foo[foo < 0] = 0
@@ -133,25 +136,25 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
         nationaldata['D_voteshare'] = foo  # ????? really national data isn't loaded !!!
         nationalraw = foo
         baselinemessage = baselinemessage + ' Random, partisan-symmetric districts.';
-    elif yearbaseline in np.arange(1898, 2016, 2):
-        baselinemessage = baselinemessage + ' U.S. House results of ' + str(yearbaseline)
-        if statebaseline[0] < 1:
-            nationaldata = gerrymander_readresults(yearbaseline, list(range(1, 51)))
+    elif year_baseline in np.arange(1898, 2016, 2):
+        baselinemessage = baselinemessage + ' U.S. House results of ' + str(year_baseline)
+        if state_baseline[0] < 1:
+            nationaldata = gerrymander_read_results(year_baseline, list(range(1, 51)))
             baselinemessage = baselinemessage + ' in all 50 states'
         else:
-            nationaldata = gerrymander_readresults(yearbaseline, statebaseline)
-            if len(statebaseline) == 50:
+            nationaldata = gerrymander_read_results(year_baseline, state_baseline)
+            if len(state_baseline) == 50:
                 baselinemessage = baselinemessage + ' in all 50 states'
-            elif len(statebaseline) >= 30:
-                omitstates = np.setdiff1d(list(range(1, 51)), statebaseline)
-                baselinemessage = baselinemessage + ' in all states, but omitting: ' + gerrymander_statename(
+            elif len(state_baseline) >= 30:
+                omitstates = np.setdiff1d(list(range(1, 51)), state_baseline)
+                baselinemessage = baselinemessage + ' in all states, but omitting: ' + gerrymander_state_name(
                     omitstates);
             else:
-                baselinemessage = + baselinemessage + ' in: ' + str(gerrymander_statename(statebaseline))
+                baselinemessage = + baselinemessage + ' in: ' + str(gerrymander_state_name(state_baseline))
 
         nationalraw = nationaldata['D_voteshare']
     else:  # just do Pennsylvania 2012 ???????? incorrect comment ????????
-        nationaldata = gerrymander_readresults(2012, list(range(1, 51)))
+        nationaldata = gerrymander_read_results(2012, list(range(1, 51)))
         baselinemessage = baselinemessage + ' U.S. House 2012'
         print('Yearbaseline parameter didn''t parse - defaulting national data to 2012')
 
@@ -164,9 +167,9 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
     # Let's round stateraw to 5 digits to for the 1.00000's to 1
     rounded_stateraw = [round(state, 5) for state in stateraw]
     anyimputed = 0 in rounded_stateraw or 1 in rounded_stateraw
-    imputeduncontested = min(imputeduncontested, 1)
-    imputeduncontested = max(imputeduncontested, 0)
-    imputedfloor = min(imputeduncontested, 1 - imputeduncontested)
+    imputed_uncontested = min(imputed_uncontested, 1)
+    imputed_uncontested = max(imputed_uncontested, 0)
+    imputedfloor = min(imputed_uncontested, 1 - imputed_uncontested)
 
     stateresults = stateraw
     # Turn all the 0's in stateresults into whatever number the imputed floor is
@@ -182,7 +185,7 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
     D_mean = mean(stateresults)
     R_mean = 1 - D_mean
 
-    f1 = open(outputfilename + '.html', 'w')
+    f1 = open(output_filename + '.html', 'w')
 
     site = 'http://gerrymander.princeton.edu';
     msg = '<b>Gerrymandering analyzer from Prof. Sam Wang, Princeton University</b>';
@@ -190,19 +193,19 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
 
     print('%s</p>\n<p>' % (electionmessage), file=f1)
     print('%s</p>\n<p></p>\n<p>' % (baselinemessage), file=f1)
-    state_name = gerrymander_statename(states)  # will give two-letter abbreviation of state
+    state_name = gerrymander_state_name(states)  # will give two-letter abbreviation of state
 
     if N_delegates <= 1:
         formatSpec = 'Analysis is not possible. %s only has one representative listed, and single-district states cannot be redistricted.</p>\n'
         print(formatSpec % state_name, file=f1);
     # results=0
     else:
-        state_name = gerrymander_statename(states)  # will give two-letter abbreviation of state  ?????????
+        state_name = gerrymander_state_name(states)  # will give two-letter abbreviation of state  ?????????
         formatSpec = 'The %s delegation has %i seats, %i Democratic/other and %i Republican.</p>\n<p>'
         print(formatSpec % (str(state_name), N_delegates, N_D, N_R), file=f1)
-        if imputeduncontested != 0:
+        if imputed_uncontested != 0:
             print('Uncontested races are assumed to have been won with %i%% of the vote.</p>\n<p>' % (
-            imputeduncontested * 100), file=f1)
+                imputed_uncontested * 100), file=f1)
 
         print('The average Democratic share of the two-party total vote was %2.1f%% (raw)' % (D_mean_raw * 100),
               file=f1)
@@ -299,10 +302,12 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
             fig.suptitle('Analysis of Intents: Lopsided wins by one side', fontsize=10, fontweight='bold')
             ax = fig.add_subplot(111)
             ax.boxplot(data, 0, 'ro', 0, labels=labels, showfliers=True, showmeans=True)
+            ax.scatter(data_d, np.ones(len(data_d)))
+            ax.scatter(data_r, 2 * np.ones(len(data_r)))
             ax.set_xlabel('Winning vote percentage')
-            plt.savefig(outputfilename + '_Test1.png')
+            plt.savefig(output_filename + '_Test1.png')
  #           plt.show()
-            print('<IMG SRC="%s_Test1.png" border="0" alt="Logo"></p>\n<p>' % outputfilename, file=f1)
+            print('<IMG SRC="%s_Test1.png" border="0" alt="Logo"></p>\n<p>' % output_filename, file=f1)
         else:
             print('Can''t compare win margins. For this test, both parties must have at least two seats.</p>\n<p></p>\n<p>',
                 file=f1)
@@ -373,9 +378,9 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
             y = data[0]
             x = np.random.normal(1, 0.04, size=len(y))
             ax.plot(x, y)
-            plt.savefig(outputfilename + '_Test2a.png')
+            plt.savefig(output_filename + '_Test2a.png')
 #            plt.show()
-            print('<IMG SRC="%s_Test2a.png" border="0" alt="Logo"></p>\n<p></p>\n<p>' % outputfilename, file=f1)
+            print('<IMG SRC="%s_Test2a.png" border="0" alt="Logo"></p>\n<p></p>\n<p>' % output_filename, file=f1)
 
         else:
             print('Can''t compare win margins. For this test, both parties must have at least two seats.</p>\n<p></p>\n<p>', file=f1)
@@ -385,7 +390,7 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
         # chi square test on majority of delegation
         if len(D_districts) > len(R_districts):
             varcompare = np.var(nationalresults[nationalresults > 0.5])
-            p2b = vartest(list(stateresults.tolist()[i] for i in D_districts), varcompare)
+            p2b = var_test(list(stateresults.tolist()[i] for i in D_districts), varcompare)
             std_value = np.std(list(stateresults.tolist()[i] for i in D_districts)*100, ddof=1)
             var_value = np.sqrt(varcompare)*100
             print('The standard deviation of the Democratic majority''s winning vote share is %2.1f %%. ' % std_value, file=f1)
@@ -393,7 +398,7 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
         else:
             data_1 = nationalresults[nationalresults < 0.5]
             varcompare = np.var(data_1, ddof=1)
-            p2b = vartest(list(stateresults.tolist()[i] for i in R_districts), varcompare)
+            p2b = var_test(list(stateresults.tolist()[i] for i in R_districts), varcompare)
             std_value = np.std(list(stateresults.tolist()[i] for i in R_districts), ddof=1) * 100
             var_value = np.sqrt(varcompare) * 100
             print('The standard deviation of the Republican majority''s winning vote share is %2.1f %%. ' % std_value,
@@ -419,9 +424,9 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
 #        ax.boxplot(data, 0, 'ro', 0, labels=labels, showfliers=True, showmeans=True)
 #        ax.set_xlabel('Districts (sorted by vote share)')
 #        ax.set_ylabel('Democratic vote share (%)')
-#        plt.savefig(outputfilename + '_Test2b.png')
+#        plt.savefig(output_filename + '_Test2b.png')
 #        plt.show()
-#        print('<IMG SRC="%s_Test2b.png" border="0" alt="Logo"></p>\n<p>' % outputfilename, file=f1)
+#        print('<IMG SRC="%s_Test2b.png" border="0" alt="Logo"></p>\n<p>' % output_filename, file=f1)
 
     f1.close()
 
@@ -446,10 +451,10 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
     #        set(gca,'YTick',[0 10 20 30 40 50 60 70 80 90 100]);
     #
     #        set(gcf,'PaperPositionMode','auto')
-    #        print([outputfilename '_Test2b_hires.jpg'],'-djpeg','-r300')
-    #        screen2jpeg([outputfilename '_Test2b.jpg'])#
+    #        print([output_filename '_Test2b_hires.jpg'],'-djpeg','-r300')
+    #        screen2jpeg([output_filename '_Test2b.jpg'])#
     #
-    #        fprintf(fid,'<IMG SRC="%s_Test2b.jpg" border="0" alt="Logo"></p>\n<p></p>\n',outputfilename);    
+    #        fprintf(fid,'<IMG SRC="%s_Test2b.jpg" border="0" alt="Logo"></p>\n<p></p>\n',output_filename);
     #    end
     #    results=1;
     # end
@@ -466,3 +471,5 @@ def gerrymander_tests_part1(year, states, yearbaseline, statebaseline, imputedun
 # x = np.ones(len(y))
 # P.plot(x, y, 'r.', color = 'blue')
 # P.show()
+
+gerrymander_tests_part1(2016,3,2016,0,0.75,0,'Arizona','foo')
