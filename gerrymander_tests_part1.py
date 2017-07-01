@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 ######################################################################################################################
 
 def gerrymander_read_results(year, states):
-    # Let's read the csv file into a pandas dataframe
+    # Let's read the csv file into a pandas data frame
     df = pd.read_csv('House_1898_2014_voteshares_notext.csv', header=None)
     # Let's name the columns
     df.columns = ['Year', 'State', 'District', 'D_voteshare', 'Incumbent', 'Winner']
@@ -24,14 +24,14 @@ def gerrymander_read_results(year, states):
     year_df = df[df['Year'] == year]
     # Now we'll just take the values with the correct states
     result = year_df[year_df['State'].isin(states)]
-    # Drop the 'Year' column from the dataframe
+    # Drop the 'Year' column from the data frame
     del result['Year']
-    # Return the remaining dataframe
+    # Return the remaining data frame
     return result
 
 
-# This is a port of gerrymander_statename.m
-#def gerrymander_statename(state_number_list):
+# This is a port of gerrymander_state_name.m
+#def gerrymander_state_name(state_number_list):
 #    '''This function accepts a list of ints as an input and returns the state
 #    abbreviations corresponding to those numbers'''
 #    statelist = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA',
@@ -42,8 +42,8 @@ def gerrymander_read_results(year, states):
 #    for i in range(len(print_list)):
 #        print(statelist[print_list[i] - 1], end=' ')
 
-# This is a port of gerrymander_statename.m
-def gerrymander_statename(foo):
+# This is a port of gerrymander_state_name.m
+def gerrymander_state_name(foo):
     statelist = 'AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY '
 
     sfoo = ''
@@ -72,7 +72,8 @@ def int_to_list(possible_int):
         possible_int = [possible_int]
     return possible_int
 
-def vartest(data_c, var_c):
+
+def var_test(data_c, var_c):
     '''This function calculates variance test like the similar function in Matlab in source code with left tail'''
     df = len(data_c) - 1
     var_d = np.var(data_c, ddof=1)
@@ -114,12 +115,12 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
     elif year in np.arange(1898, 2100, 2):
         statedata = gerrymander_read_results(year, states)
         stateraw = statedata['D_voteshare']  # I'm thinking he's looking for D_voteshare
-        statename = [gerrymander_statename(states)]
+        statename = [gerrymander_state_name(states)]
         electionmessage = electionmessage + ' U.S. House election of ' + str(year) + ' in ' + str(statename)
     else:
         statedata = gerrymander_read_results(2012, 38)
         stateraw = statedata['D_voteshare']  # I'm thinking he's looking for D_voteshare
-        statename = gerrymander_statename([38])
+        statename = gerrymander_state_name([38])
         print('Year parameter didn''t parse - defaulting to U.S. House Pennsylvania 2012')
 
     baselinemessage = 'Districts to be sampled for fantasy delegations: '
@@ -146,10 +147,10 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
                 baselinemessage = baselinemessage + ' in all 50 states'
             elif len(state_baseline) >= 30:
                 omitstates = np.setdiff1d(list(range(1, 51)), state_baseline)
-                baselinemessage = baselinemessage + ' in all states, but omitting: ' + gerrymander_statename(
+                baselinemessage = baselinemessage + ' in all states, but omitting: ' + gerrymander_state_name(
                     omitstates);
             else:
-                baselinemessage = + baselinemessage + ' in: ' + str(gerrymander_statename(state_baseline))
+                baselinemessage = + baselinemessage + ' in: ' + str(gerrymander_state_name(state_baseline))
 
         nationalraw = nationaldata['D_voteshare']
     else:  # just do Pennsylvania 2012 ???????? incorrect comment ????????
@@ -192,14 +193,14 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
 
     print('%s</p>\n<p>' % (electionmessage), file=f1)
     print('%s</p>\n<p></p>\n<p>' % (baselinemessage), file=f1)
-    state_name = gerrymander_statename(states)  # will give two-letter abbreviation of state
+    state_name = gerrymander_state_name(states)  # will give two-letter abbreviation of state
 
     if N_delegates <= 1:
         formatSpec = 'Analysis is not possible. %s only has one representative listed, and single-district states cannot be redistricted.</p>\n'
         print(formatSpec % state_name, file=f1);
     # results=0
     else:
-        state_name = gerrymander_statename(states)  # will give two-letter abbreviation of state  ?????????
+        state_name = gerrymander_state_name(states)  # will give two-letter abbreviation of state  ?????????
         formatSpec = 'The %s delegation has %i seats, %i Democratic/other and %i Republican.</p>\n<p>'
         print(formatSpec % (str(state_name), N_delegates, N_D, N_R), file=f1)
         if imputed_uncontested != 0:
@@ -389,7 +390,7 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
         # chi square test on majority of delegation
         if len(D_districts) > len(R_districts):
             varcompare = np.var(nationalresults[nationalresults > 0.5])
-            p2b = vartest(list(stateresults.tolist()[i] for i in D_districts), varcompare)
+            p2b = var_test(list(stateresults.tolist()[i] for i in D_districts), varcompare)
             std_value = np.std(list(stateresults.tolist()[i] for i in D_districts)*100, ddof=1)
             var_value = np.sqrt(varcompare)*100
             print('The standard deviation of the Democratic majority''s winning vote share is %2.1f %%. ' % std_value, file=f1)
@@ -397,7 +398,7 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
         else:
             data_1 = nationalresults[nationalresults < 0.5]
             varcompare = np.var(data_1, ddof=1)
-            p2b = vartest(list(stateresults.tolist()[i] for i in R_districts), varcompare)
+            p2b = var_test(list(stateresults.tolist()[i] for i in R_districts), varcompare)
             std_value = np.std(list(stateresults.tolist()[i] for i in R_districts), ddof=1) * 100
             var_value = np.sqrt(varcompare) * 100
             print('The standard deviation of the Republican majority''s winning vote share is %2.1f %%. ' % std_value,
