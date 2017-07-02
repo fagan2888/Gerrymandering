@@ -1,16 +1,28 @@
 <component name="ProjectDictionaryState">
   <dictionary name="HMGSYS">
     <words>
+      <w>boxplot</w>
       <w>cabilio</w>
+      <w>djpeg</w>
+      <w>fontsize</w>
+      <w>fontweight</w>
+      <w>fprintf</w>
       <w>ifoo</w>
       <w>masaro</w>
       <w>matlab</w>
       <w>mmdiff</w>
       <w>notext</w>
+      <w>pylab</w>
+      <w>savefig</w>
       <w>sfoo</w>
+      <w>showfliers</w>
+      <w>showmeans</w>
       <w>symm</w>
       <w>voteshare</w>
       <w>voteshares</w>
+      <w>xlabel</w>
+      <w>xlim</w>
+      <w>ylabel</w>
     </words>
   </dictionary>
 </component>

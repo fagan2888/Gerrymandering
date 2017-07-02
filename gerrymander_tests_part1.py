@@ -138,7 +138,7 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
         # national_data = gerrymander_read_results(2012, list(range(1, 51)))
         baseline_message = baseline_message + ' U.S. House 2012'
         print("Year_baseline parameter didn't parse - defaulting national data to 2012")
-        national_raw = national_data['D_voteshare'] # Added because referenced without assignmnet
+        national_raw = national_data['D_voteshare']  # Added because referenced without assignment
 
     n_delegates = len(state_raw)
     d_districts = indices(state_raw, lambda x_temp: x_temp >= 0.5)
@@ -148,7 +148,7 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
 
     # Let's round state_raw to 5 digits to for the 1.00000's to 1
     rounded_state_raw = [round(state, 5) for state in state_raw]
-    anyimputed = 0 in rounded_state_raw or 1 in rounded_state_raw
+    any_imputed = 0 in rounded_state_raw or 1 in rounded_state_raw
     imputed_uncontested = min(imputed_uncontested, 1)
     imputed_uncontested = max(imputed_uncontested, 0)
     imputed_floor = min(imputed_uncontested, 1 - imputed_uncontested)
@@ -200,16 +200,16 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
         print("<b>Analysis of Intents</b></p>\n<p></p>\n<p>", file=f1)
 
         print("If a political party wishes to create for itself an advantage, it will pack its opponents to win "
-            "overwhelmingly in a small number of districts, while distributing its own votes more thinly, "
-            "but still to produce reliable wins. ",
-            file=f1)
+              "overwhelmingly in a small number of districts, while distributing its own votes more thinly, "
+              "but still to produce reliable wins. ",
+              file=f1)
         print('</p>\n<p></p>\n<p>', file=f1)
         print("Partisan gerrymandering arises not from single districts, but from patterns of outcomes. Thus a single "
               "lopsided district may not be an offense - indeed, single-district gerrymandering is permitted by "
               "Supreme Court precedent, and may be required for the construction of individual districts that comply "
               "with the Voting Rights Act. Rather, it is combinations of outcomes that confer undue advantage to one "
               "party or the other.",
-            file=f1)
+              file=f1)
         print('</p>\n<p></p>\n<p>', file=f1)
         print('The following two tests provide a way of quantifying any such advantage in a set of election results.',
               file=f1)
@@ -295,9 +295,8 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
             #           plt.show()
             print('<IMG SRC="%s_Test1.png" border="0" alt="Logo"></p>\n<p>' % output_filename, file=f1)
         else:
-            print(
-                "Can't compare win margins. For this test, both parties must have at least two seats.</p>\n<p></p>\n<p>",
-                file=f1)
+            print("Can't compare win margins. For this test, both parties must have at least two "
+                  "seats.</p>\n<p></p>\n<p>", file=f1)
 
             #########################################
             ##### Test for asymmetric advantage #####
@@ -358,7 +357,7 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
             fig = plt.figure()
             fig.suptitle('Analysis of Intents: Mean-median difference in vote share', fontsize=10, fontweight='bold')
             ax = fig.add_subplot(111)
-            ax.boxplot(data, 0, 'rs', 0, labels=labels, showmeans=True)
+            ax.boxplot(data, 0, 'rs', 0, showmeans=True) # labels were removed
             ax.set_xlabel('Democratic Party vote share (%)')
             y = data[0]
             x = np.random.normal(1, 0.04, size=len(y))
@@ -372,9 +371,12 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
                   "seats.</p>\n<p></p>\n<p>", file=f1)
 
     if partisan_balance < 0.05:
-        print(
-            'When one party is dominant statewide, it gains an overall advantage by spreading its strength as uniformly as possible across districts. The statistical test to detect an abnormally uniform pattern is the <a href="http://www.itl.nist.gov/div898/handbook/eda/section3/eda358.htm">chi-square test</a>, in which the vote share of the majority party-controlled seats are compared with nationwide patterns.</p>\n<p></p>\n<p>',
-            file=f1)
+        print("When one party is dominant statewide, it gains an overall advantage by spreading its strength as "
+              "uniformly as possible across districts. The statistical test to detect an abnormally uniform pattern "
+              "is the <a href=\"http://www.itl.nist.gov/div898/handbook/eda/section3/eda358.htm\">chi-square "
+              "test</a>, in which the vote share of the majority party-controlled seats are compared with nationwide "
+              "patterns.</p>\n<p></p>\n<p>",
+              file=f1)
         # chi square test on majority of delegation
         if len(d_districts) > len(r_districts):
             var_compare = np.var(national_results[national_results > 0.5])
@@ -396,8 +398,8 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
 
         if p2b < 0.01:
             print("This difference is statistically significant (p<0.01), and in a case of suspected gerrymandering is "
-                "extremely unlikely to have arisen by chance. ",
-                file=f1)
+                  "extremely unlikely to have arisen by chance. ",
+                  file=f1)
         elif p2b < 0.05:
             print('This difference is statistically significant (p<0.05), and in a case of suspected gerrymandering is '
                   'unlikely to have arisen by chance. ',
@@ -411,19 +413,15 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
     #        data = [df_state_raw['D_voteshare']]
     #        color = list(df_state_raw['pol'])
 
-    #        fig = plt.figure()
-    #        fig.suptitle('Analysis of Intents: Chi-square test for unusually uniform outcomes', fontsize=10, fontweight='bold')
-    #        ax = fig.add_subplot(111)
-    #        ax.boxplot(data, 0, 'ro', 0, labels=labels, showfliers=True, showmeans=True)
-    #        ax.set_xlabel('Districts (sorted by vote share)')
-    #        ax.set_ylabel('Democratic vote share (%)')
-    #        plt.savefig(output_filename + '_Test2b.png')
-    #        plt.show()
-    #        print('<IMG SRC="%s_Test2b.png" border="0" alt="Logo"></p>\n<p>' % output_filename, file=f1)
+    # fig = plt.figure() fig.subtitle('Analysis of Intents: Chi-square test for unusually uniform outcomes',
+    # fontsize=10, fontweight='bold') ax = fig.add_subplot(111) ax.boxplot(data, 0, 'ro', 0, labels=labels,
+    # showfliers=True, showmeans=True) ax.set_xlabel('Districts (sorted by vote share)') ax.set_ylabel('Democratic
+    # vote share (%)') plt.savefig(output_filename + '_Test2b.png') plt.show() print('<IMG SRC="%s_Test2b.png"
+    # border="0" alt="Logo"></p>\n<p>' % output_filename, file=f1)
 
     f1.close()
 
-    #    % JPEG: show barplot of all districts
+    #    % JPEG: show bar plot of all districts
     #    % inset message, SD of majority district vote share, compare with national SD
     #        Fig2b = figure(3);
     #        set(Fig2b, 'Position', [600 100 600 300])
@@ -438,8 +436,8 @@ def gerrymander_tests_part1(year, states, year_baseline, state_baseline, imputed
     #            bar([length(d_districts)+1:length(d_districts)+length(r_districts)],100*state_raw(r_districts),'r')
     #        end
     #        axis([0 length(d_districts)+length(r_districts)+0.5 -3 100]);
-    #        xlabel('Districts (sorted by vote share)')
-    #        ylabel('Democratic vote share (%)')
+    #        x_label('Districts (sorted by vote share)')
+    #        y_label('Democratic vote share (%)')
     #        set(gca,'XTick',[]);
     #        set(gca,'YTick',[0 10 20 30 40 50 60 70 80 90 100]);
     #
